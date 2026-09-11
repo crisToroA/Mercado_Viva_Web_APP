@@ -1,10 +1,16 @@
-version: '3.8'
+version: "3.9"
 services:
   db:
-    image: postgres:15
+    image: postgres:16
+    container_name: mercado-viva-db
     environment:
-      POSTGRES_USER: usuario_viva
-      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: mercado_user
+      POSTGRES_PASSWORD: mercado_pass
       POSTGRES_DB: mercado_viva
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
