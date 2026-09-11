@@ -23,6 +23,11 @@ app.get("/api/ping-db", async (req, res) => {
     }
 });
 
+app.get("/api/productos", async (req, res) => {
+  const resultado = await pool.query("SELECT * FROM productos");
+  res.json(resultado.rows);
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor corre en http://localhost:${PORT}`);
 });
