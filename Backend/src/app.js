@@ -23,6 +23,8 @@ app.get("/api/ping-db", async (req, res) => {
     }
 });
 
+app.use("/api/verificacion", require("./routes/verificacion.routes"));
+
 app.listen(PORT, () => {
     console.log(`Servidor corre en http://localhost:${PORT}`);
 });
