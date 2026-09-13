@@ -1,4 +1,4 @@
-CREATE TABLE productos (
+CREATE TABLE IF NOT EXISTS productos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     precio NUMERIC(10, 2) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE productos (
     CONSTRAINT stock_reservado_valido CHECK (stock_reservado <= stock_total)
 );
 
-CREATE TABLE reservas (
+CREATE TABLE IF NOT EXISTS reservas (
     id SERIAL PRIMARY KEY,
     producto_id INTEGER NOT NULL REFERENCES productos(id),
     cantidad INTEGER NOT NULL CHECK (cantidad > 0),
