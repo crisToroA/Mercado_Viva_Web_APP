@@ -1,4 +1,8 @@
-const socket = io("http://localhost:3000");
+const SOCKET_URL = window.location.hostname === "localhost" 
+  ? "http://localhost:3000" 
+  : window.location.origin;
+
+const socket = io(SOCKET_URL);
 
 const productosCache = new Map();
 const reservasActivas = new Map(); // reservaId -> { productoId, cantidad, expiraEn, intervalId }

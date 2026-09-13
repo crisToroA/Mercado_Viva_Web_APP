@@ -1,4 +1,6 @@
-const API_BASE = "http://localhost:3000";
+const API_BASE = window.location.hostname === "localhost" 
+  ? "http://localhost:3000" 
+  : ""; // En producción usa la misma URL donde está alojada la página
 
 async function obtenerProductos() {
   const respuesta = await fetch(`${API_BASE}/api/productos`);
