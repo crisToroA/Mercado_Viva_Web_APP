@@ -72,23 +72,20 @@ async function inicializarBD() {
   try {
     let necesitaInicializar = false;
 
-    // 1. Verificamos si la tabla ya existe y tiene datos
     try {
       const res = await pool.query("SELECT COUNT(*) FROM productos");
       if (parseInt(res.rows[0].count) === 0) necesitaInicializar = true;
     } catch (e) {
-      // Si entra aquí, es porque la tabla "productos" aún no existe
       necesitaInicializar = true;
     }
 
-    // 2. Si ya hay datos, detenemos la inicialización para no duplicar
     if (!necesitaInicializar) {
       console.log("✅ La base de datos ya tiene productos. Omitiendo schema.sql.");
       return;
     }
 
     console.log("Conectando a la BD para verificar/crear tablas e insertar datos...");
-    const schemaPath = path.join(__dirname, 'schema.sql'); // Ajusta la ruta si es necesario
+    const schemaPath = path.join(__dirname, 'schema.sql'); // Ajusta tu ruta aquí
     
     if (fs.existsSync(schemaPath)) {
       const schema = fs.readFileSync(schemaPath, 'utf8');
@@ -101,3 +98,11 @@ async function inicializarBD() {
     console.error("❌ Error al inicializar la base de datos:", error);
   }
 }
+
+// 1. Levantamos el servidor INMEDIATAMENTE para que Render no aborte el despliegue
+servidorHttp.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
+});
+
+// 2. Ejecutamos la revisión de la BD en segundo plano
+inicializarBD();
