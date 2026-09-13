@@ -42,18 +42,20 @@ app.get("/api/productos", async (req, res) => {
 
 app.get("/api/limpiar-duplicados", async (req, res) => {
   try {
-    // Esta consulta borra todos los productos repetidos dejando solo el más antiguo (MIN id)
-    await pool.query(`
-      DELETE FROM productos
-      WHERE id NOT IN (
-        SELECT MIN(id)
-        FROM productos
-        GROUP BY nombre
-      );
-    `);
-    res.send("¡Duplicados eliminados correctamente! Ya puedes volver a tu página principal.");
+    // Borramos primero las reservas para no tener errores de llave foránea (Foreign Key)
+    await pool.query("DELETE FROM reservas;");
+    
+    // Borramos todos los productos actuales
+    await pool.query("DELETE FROM productos;");
+    
+    // Volvemos a leer y ejecutar el schema para insertar los 3 productos originales
+    const schemaPath = path.join(__dirname, 'db', 'schema.sql');
+    const schema = fs.readFileSync(schemaPath, 'utf8');
+    await pool.query(schema);
+
+    res.send("¡Base de datos reseteada! Duplicados eliminados correctamente. Ya puedes volver a tu página principal.");
   } catch (error) {
-    console.error(error);
+    console.error("Error al resetear la BD:", error);
     res.status(500).send("Error al limpiar: " + error.message);
   }
 });
