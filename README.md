@@ -10,6 +10,8 @@ Este proyecto está configurado para que cualquier desarrollador pueda levantarl
 
 ### Requisitos previos
 * Tener [Docker](https://www.docker.com/products/docker-desktop/) instalado y en ejecución.
+* Tener instalado Node.JS
+* Un IDE como lo puede ser Visual Studio Code o Antigravity
 
 ### ¿Cómo levantar el proyecto?
 1. Abre una terminal en la raíz del proyecto.
