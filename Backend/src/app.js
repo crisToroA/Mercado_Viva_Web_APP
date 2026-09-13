@@ -85,7 +85,7 @@ async function inicializarBD() {
     }
 
     console.log("Conectando a la BD para verificar/crear tablas e insertar datos...");
-    const schemaPath = path.join(__dirname, 'schema.sql'); // Ajusta tu ruta aquí
+    const schemaPath = path.join(__dirname, 'db', 'schema.sql'); // Ajusta tu ruta aquí
     
     if (fs.existsSync(schemaPath)) {
       const schema = fs.readFileSync(schemaPath, 'utf8');
