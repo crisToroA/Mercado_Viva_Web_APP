@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const path = require("path");
 const pool = require("./db/pool");
 const { iniciarJobLiberacion } = require("./jobs/liberar-reservas-vencidas.job");
 const { inicializarSocket } = require("./sockets/index");
@@ -8,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../../Frontend")));
 
 app.get("/", (req, res) => {
   res.send("Hola mundo desde el backend de Mercado Viva");
@@ -40,4 +42,5 @@ iniciarJobLiberacion();
 
 servidorHttp.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+
 });

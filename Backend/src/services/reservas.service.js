@@ -1,7 +1,7 @@
 const pool = require("../db/pool");
-const { emitirInventarioActualizado } = require("../sockets/index"); // <-- NUEVA línea, arriba del todo
+const { emitirInventarioActualizado } = require("../sockets/index");
 
-const MINUTOS_EXPIRACION = 5;
+const MINUTOS_EXPIRACION = 1;
 
 async function crearReserva(productoId, cantidad) {
   const client = await pool.connect();
@@ -46,13 +46,11 @@ async function crearReserva(productoId, cantidad) {
 
     await client.query("COMMIT");
 
-    // ---- NUEVO: bloque de 4 líneas, después del COMMIT, antes del return ----
     const productoActualizado = await pool.query(
       "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
       [productoId]
     );
     emitirInventarioActualizado(productoActualizado.rows[0]);
-    // --------------------------------------------------------------------
 
     return resultadoReserva.rows[0];
   } catch (error) {

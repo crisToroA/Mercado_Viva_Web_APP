@@ -1,1 +1,43 @@
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mercado Viva — Verificación de inventario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>Mercado Viva</h1>
+      <p>Verificación de inventario para compras digitales</p>
+    </div>
+    <div class="conexion" id="conexion-estado">
+      <span class="conexion-punto" id="conexion-punto"></span>
+      <span id="conexion-texto">Conectando…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="productos-panel">
+      <h2>Productos</h2>
+      <div class="productos-grid" id="productos-grid">
+        <p class="cargando">Cargando productos…</p>
+      </div>
+    </section>
+
+    <section class="actividad-panel">
+      <h2>Actividad en tiempo real</h2>
+      <ul class="actividad-log" id="actividad-log">
+        <li class="actividad-vacia">Los eventos aparecerán aquí apenas ocurran.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
