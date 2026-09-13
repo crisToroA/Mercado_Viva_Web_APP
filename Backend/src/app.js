@@ -40,6 +40,24 @@ app.get("/api/productos", async (req, res) => {
   }
 });
 
+app.get("/api/limpiar-duplicados", async (req, res) => {
+  try {
+    // Esta consulta borra todos los productos repetidos dejando solo el más antiguo (MIN id)
+    await pool.query(`
+      DELETE FROM productos
+      WHERE id NOT IN (
+        SELECT MIN(id)
+        FROM productos
+        GROUP BY nombre
+      );
+    `);
+    res.send("¡Duplicados eliminados correctamente! Ya puedes volver a tu página principal.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al limpiar: " + error.message);
+  }
+});
+
 app.use("/api/verificacion", require("./routes/verificacion.routes"));
 
 const servidorHttp = http.createServer(app);
@@ -52,29 +70,34 @@ iniciarJobLiberacion();
 // ==========================================
 async function inicializarBD() {
   try {
-    console.log("Conectando a la BD para verificar/crear tablas...");
+    let necesitaInicializar = false;
+
+    // 1. Verificamos si la tabla ya existe y tiene datos
+    try {
+      const res = await pool.query("SELECT COUNT(*) FROM productos");
+      if (parseInt(res.rows[0].count) === 0) necesitaInicializar = true;
+    } catch (e) {
+      // Si entra aquí, es porque la tabla "productos" aún no existe
+      necesitaInicializar = true;
+    }
+
+    // 2. Si ya hay datos, detenemos la inicialización para no duplicar
+    if (!necesitaInicializar) {
+      console.log("✅ La base de datos ya tiene productos. Omitiendo schema.sql.");
+      return;
+    }
+
+    console.log("Conectando a la BD para verificar/crear tablas e insertar datos...");
+    const schemaPath = path.join(__dirname, 'schema.sql'); // Ajusta la ruta si es necesario
     
-    // IMPORTANTE: Esta ruta asume que el archivo schema.sql está en la misma carpeta que este archivo.
-    // Si lo tienes dentro de la carpeta "db", cámbialo a: path.join(__dirname, 'db', 'schema.sql')
-    const schemaPath = path.join(__dirname, 'db', 'schema.sql');
-    
-    // Verificamos que el archivo realmente exista antes de leerlo
     if (fs.existsSync(schemaPath)) {
       const schema = fs.readFileSync(schemaPath, 'utf8');
       await pool.query(schema);
-      console.log("✅ Tablas verificadas/creadas exitosamente en la BD de Render.");
+      console.log("✅ Tablas creadas y datos insertados por primera vez.");
     } else {
       console.warn(`⚠️ No se encontró schema.sql en: ${schemaPath}`);
-      console.warn(`Asegúrate de ajustar la ruta correcta en tu index.js`);
     }
   } catch (error) {
     console.error("❌ Error al inicializar la base de datos:", error);
   }
 }
-
-// Inicializamos la BD y SOLO SI termina (con éxito o error), levantamos el servidor
-inicializarBD().then(() => {
-  servidorHttp.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
-  });
-});
