@@ -1,5 +1,6 @@
 const express = require('express');
 const pool = require('./db/pool');
+const { iniciarJobLiberacion } = require("./jobs/liberar-reservas-vencidas.job");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,4 +28,10 @@ app.use("/api/verificacion", require("./routes/verificacion.routes"));
 
 app.listen(PORT, () => {
     console.log(`Servidor corre en http://localhost:${PORT}`);
+});
+
+iniciarJobLiberacion();
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
