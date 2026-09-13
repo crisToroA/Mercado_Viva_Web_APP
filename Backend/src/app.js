@@ -56,7 +56,7 @@ async function inicializarBD() {
     
     // IMPORTANTE: Esta ruta asume que el archivo schema.sql está en la misma carpeta que este archivo.
     // Si lo tienes dentro de la carpeta "db", cámbialo a: path.join(__dirname, 'db', 'schema.sql')
-    const schemaPath = path.join(__dirname, 'schema.sql'); 
+    const schemaPath = path.join(__dirname, 'db', 'schema.sql');
     
     // Verificamos que el archivo realmente exista antes de leerlo
     if (fs.existsSync(schemaPath)) {
