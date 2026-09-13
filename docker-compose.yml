@@ -12,5 +12,23 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  backend:
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: mercado-viva-backend
+    environment:
+      DATABASE_URL: postgresql://mercado_user:mercado_pass@db:5432/mercado_viva
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    # Usamos el script "dev" que utiliza nodemon para recargar los cambios en vivo
+    command: npm run dev
+
 volumes:
   db_data:
