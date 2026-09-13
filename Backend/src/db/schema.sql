@@ -14,7 +14,7 @@ CREATE TABLE reservas (
     estado VARCHAR(20) NOT NULL DEFAULT 'activa'
         CHECK (estado IN ('activa', 'confirmada', 'liberada', 'expirada')),
     creada_en TIMESTAMP NOT NULL DEFAULT NOW(),
-    expirada_en TIMESTAMP NOT NULL
+    expira_en TIMESTAMP NOT NULL
 );
 
 --Productos de prueba
