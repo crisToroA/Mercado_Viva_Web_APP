@@ -47,7 +47,7 @@ async function crearReserva(productoId, cantidad) {
     await client.query("COMMIT");
 
     const productoActualizado = await pool.query(
-      "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
+      "SELECT id, nombre, precio, stock_total, stock_reservado FROM productos WHERE id = $1",
       [productoId]
     );
     emitirInventarioActualizado(productoActualizado.rows[0]);
@@ -100,7 +100,7 @@ async function confirmarReserva(reservaId) {
 
     // ---- NUEVO ----
     const productoActualizado = await pool.query(
-      "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
+      "SELECT id, nombre, precio, stock_total, stock_reservado FROM productos WHERE id = $1",
       [reserva.producto_id]
     );
     emitirInventarioActualizado(productoActualizado.rows[0]);
@@ -151,7 +151,7 @@ async function liberarReserva(reservaId, nuevoEstado = "liberada") {
 
     // ---- NUEVO ----
     const productoActualizado = await pool.query(
-      "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
+      "SELECT id, nombre, precio, stock_total, stock_reservado FROM productos WHERE id = $1",
       [reserva.producto_id]
     );
     emitirInventarioActualizado(productoActualizado.rows[0]);
