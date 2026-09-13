@@ -9,10 +9,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../public/Frontend")));
 
 app.get("/", (req, res) => {
-  res.send("Hola mundo desde el backend de Mercado Viva");
+  res.sendFile(path.join(__dirname, "../public/Frontend/index.html"));
 });
 
 app.get("/api/ping-db", async (req, res) => {
