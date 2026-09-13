@@ -1,4 +1,5 @@
 const pool = require("../db/pool");
+const { emitirInventarioActualizado } = require("../sockets/index"); // <-- NUEVA línea, arriba del todo
 
 const MINUTOS_EXPIRACION = 5;
 
@@ -45,6 +46,14 @@ async function crearReserva(productoId, cantidad) {
 
     await client.query("COMMIT");
 
+    // ---- NUEVO: bloque de 4 líneas, después del COMMIT, antes del return ----
+    const productoActualizado = await pool.query(
+      "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
+      [productoId]
+    );
+    emitirInventarioActualizado(productoActualizado.rows[0]);
+    // --------------------------------------------------------------------
+
     return resultadoReserva.rows[0];
   } catch (error) {
     await client.query("ROLLBACK");
@@ -53,8 +62,6 @@ async function crearReserva(productoId, cantidad) {
     client.release();
   }
 }
-
-module.exports = { crearReserva };
 
 async function confirmarReserva(reservaId) {
   const client = await pool.connect();
@@ -92,6 +99,15 @@ async function confirmarReserva(reservaId) {
     );
 
     await client.query("COMMIT");
+
+    // ---- NUEVO ----
+    const productoActualizado = await pool.query(
+      "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
+      [reserva.producto_id]
+    );
+    emitirInventarioActualizado(productoActualizado.rows[0]);
+    // ---------------
+
     return resultado.rows[0];
   } catch (error) {
     await client.query("ROLLBACK");
@@ -134,6 +150,15 @@ async function liberarReserva(reservaId, nuevoEstado = "liberada") {
     );
 
     await client.query("COMMIT");
+
+    // ---- NUEVO ----
+    const productoActualizado = await pool.query(
+      "SELECT id, nombre, stock_total, stock_reservado FROM productos WHERE id = $1",
+      [reserva.producto_id]
+    );
+    emitirInventarioActualizado(productoActualizado.rows[0]);
+    // ---------------
+
     return resultado.rows[0];
   } catch (error) {
     await client.query("ROLLBACK");
