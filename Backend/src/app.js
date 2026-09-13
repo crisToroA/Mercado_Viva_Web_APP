@@ -76,7 +76,12 @@ async function inicializarBD() {
       const res = await pool.query("SELECT COUNT(*) FROM productos");
       if (parseInt(res.rows[0].count) === 0) necesitaInicializar = true;
     } catch (e) {
-      necesitaInicializar = true;
+      // 42P01 es el código de PostgreSQL para "table does not exist"
+      if (e.code === '42P01') {
+        necesitaInicializar = true;
+      } else {
+        console.error("Error al consultar productos, posiblemente problemas de conexión:", e.message);
+      }
     }
 
     if (!necesitaInicializar) {
